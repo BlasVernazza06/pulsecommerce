@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "drizzle-orm": "^0.30.10",
+    "mysql2": "^3.9.7",
+    "postgres": "^3.4.4"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.21.4",
+    "typescript": "^5.6.2"
+  },
+  "main": "dist/index.js",
+  "name": "@pulsecommerce/db",
+  "private": true,
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push"
+  },
+  "version": "0.1.0"
+}

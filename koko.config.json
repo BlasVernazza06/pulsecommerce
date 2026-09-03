@@ -1,0 +1,33 @@
+{
+  "$schema": "https://koko-cli.dev/schema.json",
+  "project": {
+    "name": "pulsecommerce",
+    "cliVersion": "v1.0",
+    "createdAt": "2026-09-02T23:03:00.0532078Z"
+  },
+  "architecture": {
+    "layout": "monorepo",
+    "packageManager": "pnpm"
+  },
+  "stack": {
+    "frontend": {
+      "framework": "nextjs",
+      "language": "typescript",
+      "styling": "tailwindcss"
+    },
+    "backend": {
+      "framework": "nestjs",
+      "language": "typescript"
+    },
+    "database": {
+      "provider": "postgres",
+      "orm": "drizzle"
+    }
+  },
+  "features": {
+    "infrastructure": {
+      "dockerCompose": true,
+      "ciCd": "github-actions"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "files": [
+    "base.js",
+    "next.js",
+    "react-internal.js"
+  ],
+  "name": "@pulsecommerce/eslint-config",
+  "private": true,
+  "version": "0.0.0"
+}

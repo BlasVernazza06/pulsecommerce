@@ -1,0 +1,11 @@
+{
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react-library.json"
+  ],
+  "license": "MIT",
+  "name": "@pulsecommerce/typescript-config",
+  "private": true,
+  "version": "0.0.0"
+}

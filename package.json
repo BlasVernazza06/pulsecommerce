@@ -1,0 +1,30 @@
+{
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.1.1",
+    "typescript": "^5.6.2"
+  },
+  "name": "pulsecommerce",
+  "packageManager": "pnpm@9.11.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "check-types": "pnpm -r check-types",
+    "clean": "turbo clean",
+    "db:generate": "pnpm --filter @pulsecommerce/db db:generate",
+    "db:migrate": "pnpm --filter @pulsecommerce/db db:migrate",
+    "db:push": "pnpm --filter @pulsecommerce/db db:push",
+    "db:studio": "pnpm --filter @pulsecommerce/db db:studio",
+    "dev": "pnpm -r dev",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:up": "docker compose up -d",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo lint"
+  },
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
