@@ -1,10 +1,10 @@
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: './schema.ts',
+  schema: './src/schema/index.ts',
   out: './drizzle',
-  dialect: '[[ if eq .Database "mysql" ]]mysql2[[ else ]]postgresql[[ end ]]',
+  dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || '',
+    url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/pulsecommerce',
   },
 });
