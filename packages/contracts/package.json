@@ -1,0 +1,17 @@
+{
+  "name": "@pulsecommerce/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@pulsecommerce/typescript-config": "workspace:*",
+    "typescript": "^5.6.2"
+  }
+}

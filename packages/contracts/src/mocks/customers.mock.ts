@@ -1,0 +1,46 @@
+import type { Customer } from '../customers/customer.schema';
+
+export const MOCK_CUSTOMERS: Customer[] = [
+  {
+    id: '018f6c5c-aaaa-7000-8000-000000000001',
+    name: 'Consumidor Final',
+    taxId: null,
+    email: null,
+    phone: null,
+    address: null,
+    hasCreditAccount: false,
+    creditLimit: 0,
+    currentBalance: 0,
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: '018f6c5c-bbbb-7000-8000-000000000002',
+    name: 'Juan Pérez (Cuenta Corriente / Fiado)',
+    taxId: '20-35123456-9',
+    email: 'juan.perez@example.com',
+    phone: '+54 9 11 5555-1234',
+    address: 'Av. Corrientes 1450',
+    hasCreditAccount: true,
+    creditLimit: 50000.0,
+    currentBalance: 12500.0, // Debe $12.500
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+  {
+    id: '018f6c5c-cccc-7000-8000-000000000003',
+    name: 'María García',
+    taxId: '27-40987654-4',
+    email: 'maria.garcia@example.com',
+    phone: '+54 9 11 4444-5678',
+    address: 'San Martín 820',
+    hasCreditAccount: true,
+    creditLimit: 30000.0,
+    currentBalance: 0.0,
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
+];
