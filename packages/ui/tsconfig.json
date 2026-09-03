@@ -1,0 +1,10 @@
+{
+  "extends": "@pulsecommerce/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "tailwind.config.ts", "components.json"]
+}
