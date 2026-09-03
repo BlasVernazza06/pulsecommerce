@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "pulsecommerce | Powered by Koko",
-  description: "Modern fullstack application built with Turborepo and Koko-cli",
+  title: "PulseCommerce OS | Tier-1 Retail & AI POS",
+  description: "Next-generation Retail & POS Operating System",
 };
 
 export default function RootLayout({
@@ -12,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased min-h-screen bg-[#09090b] text-[#fafafa]">
+    <html lang="es" className={`dark ${dmSans.variable}`}>
+      <body className="antialiased min-h-screen bg-background text-foreground selection:bg-white/20 selection:text-white font-sans">
         {children}
       </body>
     </html>

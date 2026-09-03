@@ -1,20 +1,13 @@
 import type { Config } from "tailwindcss";
+import uiPreset from "@pulsecommerce/ui/tailwind.config";
 
 const config: Config = {
+  presets: [uiPreset as Config],
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
-    },
-  },
-  plugins: [],
 };
 
 export default config;

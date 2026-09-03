@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@repo/ui", "@repo/db", "@repo/validators"],
+  transpilePackages: ["@pulsecommerce/ui", "@pulsecommerce/db", "@pulsecommerce/validators"],
 };
 
 export default nextConfig;
