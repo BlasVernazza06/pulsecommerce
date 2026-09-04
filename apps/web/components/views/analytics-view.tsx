@@ -25,7 +25,7 @@ export function AnalyticsView() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 pb-24 space-y-6">
         {/* KPI Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="p-4 border-white/[0.08] bg-card/50">

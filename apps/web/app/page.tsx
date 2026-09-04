@@ -1,12 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { useState } from "react";
 import { AuthProvider } from "@/context/auth-context";
 import { Sidebar, type NavTabId } from "@/components/layout/sidebar";
 import { MainContent } from "@/components/layout/main-content";
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = React.useState<NavTabId>("home");
+  const [activeTab, setActiveTab] = useState<NavTabId>("home");
 
   return (
     <AuthProvider>

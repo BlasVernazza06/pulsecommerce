@@ -11,6 +11,7 @@ import { InventoryView } from "@/components/views/inventory-view";
 import { TreasuryView } from "@/components/views/treasury-view";
 import { SettingsView } from "@/components/views/settings-view";
 import { HelpView } from "@/components/views/help-view";
+import { AiCommandBar } from "@/components/ai/ai-command-bar";
 
 export interface MainContentProps {
   /** Pestaña o ruta actualmente activa */
@@ -27,7 +28,7 @@ export function MainContent({ activeTab, onNavigate }: MainContentProps) {
   const fallback = <AccessDenied onReset={() => onNavigate("home")} />;
 
   return (
-    <main className="flex-1 flex flex-col bg-[#09090b] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
+    <main className="flex-1 flex flex-col bg-[#09090b] border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl relative">
       {activeTab === "home" && <TerminalView />}
 
       {activeTab === "analytics" && (
@@ -61,6 +62,9 @@ export function MainContent({ activeTab, onNavigate }: MainContentProps) {
       )}
 
       {activeTab === "help" && <HelpView />}
+
+      {/* Barra de Comando IA flotante contextual y persistente */}
+      <AiCommandBar activeTab={activeTab} />
     </main>
   );
 }
