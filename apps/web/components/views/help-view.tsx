@@ -18,7 +18,7 @@ export function HelpView() {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 pb-24 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card className="p-5 border-white/[0.08] bg-card/50 space-y-3">
             <div className="flex items-center gap-3">

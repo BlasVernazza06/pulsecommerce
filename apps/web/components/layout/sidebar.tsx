@@ -114,7 +114,7 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
           <Can roles={["OWNER", "MANAGER"]}>
             <NavLink
               id="analytics"
-              label="Analytics"
+              label="Analiticas"
               icon={BarChart3}
               isActive={activeTab === "analytics"}
               onClick={() => onSelectTab("analytics")}
@@ -125,7 +125,7 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
           <Can roles={["OWNER", "MANAGER", "CASHIER"]}>
             <NavLink
               id="customers"
-              label="Customers"
+              label="Clientes"
               icon={Users}
               isActive={activeTab === "customers"}
               onClick={() => onSelectTab("customers")}
@@ -141,7 +141,7 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
           <Can roles={["OWNER", "MANAGER", "STOCK_CLERK"]}>
             <NavLink
               id="stock"
-              label="Inventario Multi-depósito"
+              label="Inventario"
               icon={ShoppingBag}
               isActive={activeTab === "stock"}
               onClick={() => onSelectTab("stock")}

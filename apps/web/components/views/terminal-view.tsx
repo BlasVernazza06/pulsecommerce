@@ -64,7 +64,7 @@ export function TerminalView() {
       </header>
 
       {/* Contenido scrolleable dentro de la Isla */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 pb-24 space-y-6">
         {/* Main Card (Style Kangaroo / Dub.co) */}
         <Card className="border-white/[0.08] bg-card/60 relative overflow-hidden">
           <div className="p-5 flex items-center justify-between border-b border-white/[0.06]">
