@@ -5,14 +5,12 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   MessageSquare,
   ChevronDown,
-  ChevronUp,
   SquarePen,
   Scan,
   PanelRight,
   Maximize2,
   MoreHorizontal,
   X,
-  ArrowUpRight,
   ArrowRight,
   CornerDownRight,
   Paperclip,
@@ -23,8 +21,9 @@ import {
   Quote,
   Loader2,
 } from "lucide-react";
-import { useSimulatedChat } from "./use-simulated-chat";
+import { useSimulatedChat } from "../hooks/use-simulated-chat";
 import { AiChatSourceCards } from "./ai-chat-source-card";
+import { AiChatMessageItem } from "./ai-chat-message-item";
 import {
   Tooltip,
   TooltipContent,
@@ -34,15 +33,19 @@ import {
 
 export interface AiChatViewProps {
   onClose?: () => void;
+  className?: string;
 }
 
-export function AiChatView({ onClose }: AiChatViewProps) {
+/**
+ * `<AiChatView />`
+ * Vista inmersiva y completa de Chat IA.
+ */
+export function AiChatView({ onClose, className = "" }: AiChatViewProps) {
   const {
     messages,
     inputValue,
     setInputValue,
     quotedText,
-    setQuotedText,
     removeQuote,
     isPersonalized,
     setIsPersonalized,
@@ -60,14 +63,12 @@ export function AiChatView({ onClose }: AiChatViewProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto scroll al final cuando hay nuevos mensajes
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
     }
   }, [messages, isGenerating]);
 
-  // Manejar redimensionado dinámico del textarea
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -84,11 +85,10 @@ export function AiChatView({ onClose }: AiChatViewProps) {
     <TooltipProvider delayDuration={200}>
       <div
         onMouseUp={handleMouseUp}
-        className="w-full max-w-4xl h-[92vh] max-h-[900px] flex flex-col bg-[#141417] border border-white/[0.08] rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] overflow-hidden relative select-text text-zinc-200 font-sans"
+        className={`w-full max-w-4xl h-[92vh] max-h-[900px] flex flex-col bg-[#141417] border border-white/[0.08] rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.85)] overflow-hidden relative select-text text-zinc-200 font-sans ${className}`}
       >
         {/* ─── 1. TOP HEADER BAR ─── */}
         <header className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06] bg-[#141417]/80 backdrop-blur-xl z-20 shrink-0 select-none">
-          {/* Lado izquierdo: Selector de sesión / Nuevo Chat */}
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -102,9 +102,7 @@ export function AiChatView({ onClose }: AiChatViewProps) {
             </button>
           </div>
 
-          {/* Lado derecho: Toggle Personalize + Acciones estructurales */}
           <div className="flex items-center gap-3">
-            {/* Toggle Personalize */}
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-zinc-400">Personalize</span>
               <button
@@ -124,10 +122,8 @@ export function AiChatView({ onClose }: AiChatViewProps) {
               </button>
             </div>
 
-            {/* Separador vertical */}
             <div className="h-4 w-[1px] bg-white/[0.08]" />
 
-            {/* Iconos de la barra superior (ejemplos estructurales sin acción rígida) */}
             <div className="flex items-center gap-1 text-zinc-400">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -222,7 +218,6 @@ export function AiChatView({ onClose }: AiChatViewProps) {
           ref={chatScrollRef}
           className="flex-1 overflow-y-auto px-6 py-6 space-y-6 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.1)_transparent]"
         >
-          {/* Tarjetas de fuentes flotantes superiores (Google Meet / Doc preview) */}
           {latestAssistantMessage?.sources && (
             <div className="w-full flex justify-end">
               <AiChatSourceCards
@@ -232,91 +227,14 @@ export function AiChatView({ onClose }: AiChatViewProps) {
             </div>
           )}
 
-          {/* Renderizado de Mensajes en la conversación */}
-          {messages.map((msg) => {
-            if (msg.sender === "user") {
-              return (
-                <div key={msg.id} className="flex flex-col items-end gap-1.5">
-                  {msg.quotedText && (
-                    <div className="flex items-center gap-1.5 text-xs text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-lg max-w-lg truncate">
-                      <CornerDownRight className="h-3.5 w-3.5 shrink-0" />
-                      <span className="italic truncate">&quot;{msg.quotedText}&quot;</span>
-                    </div>
-                  )}
-                  <div className="px-4 py-2.5 rounded-2xl bg-blue-600 text-white text-sm max-w-lg shadow-md font-medium">
-                    {msg.content}
-                  </div>
-                  <span className="text-[10px] text-zinc-500 px-1">{msg.timestamp}</span>
-                </div>
-              );
-            }
+          {messages.map((msg) => (
+            <AiChatMessageItem
+              key={msg.id}
+              message={msg}
+              onQuoteSelection={quoteSelection}
+            />
+          ))}
 
-            return (
-              <div key={msg.id} className="space-y-4">
-                {/* Status Indicator (ej. "Getting a detailed report...") */}
-                {msg.statusText && (
-                  <div className="flex items-center gap-2.5 text-xs text-zinc-400 font-medium">
-                    <div className="relative flex h-3.5 w-3.5 items-center justify-center">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-40" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
-                    </div>
-                    <span>{msg.statusText}</span>
-                  </div>
-                )}
-
-                {/* Encabezado de la sección con bullet + badge tiempo + chevron */}
-                {msg.sectionTitle && (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 shrink-0" />
-                      <h2 className="text-base font-semibold text-zinc-100 tracking-tight truncate">
-                        {msg.sectionTitle}
-                      </h2>
-                      {msg.sourceBadge && (
-                        <a
-                          href={msg.sourceBadge.url || "#"}
-                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-[11px] font-mono text-zinc-300 transition-colors ml-1"
-                        >
-                          <span>{msg.sourceBadge.time}</span>
-                          <ArrowUpRight className="h-3 w-3 text-zinc-400" />
-                        </a>
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      className="p-1 rounded-md hover:bg-white/[0.06] text-zinc-400 hover:text-zinc-200 transition-colors"
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Cuerpo del mensaje con texto enriquecido y selección interactiva */}
-                <div className="text-sm leading-relaxed text-zinc-300 space-y-3 pl-3.5 border-l border-white/[0.08]">
-                  <p>
-                    {msg.highlightedText && msg.content.includes(msg.highlightedText) ? (
-                      <>
-                        {msg.content.split(msg.highlightedText)[0]}
-                        <span
-                          onClick={() => quoteSelection(msg.highlightedText)}
-                          className="bg-blue-500/25 text-blue-200 px-1 py-0.5 rounded border-b border-blue-400/50 cursor-pointer hover:bg-blue-500/40 transition-colors"
-                          title="Click para citar este fragmento"
-                        >
-                          {msg.highlightedText}
-                        </span>
-                        {msg.content.split(msg.highlightedText)[1]}
-                      </>
-                    ) : (
-                      msg.content
-                    )}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Estado de generación en tiempo real */}
           {isGenerating && (
             <div className="flex items-center gap-2.5 text-xs text-blue-400 font-medium pl-3.5">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -351,11 +269,10 @@ export function AiChatView({ onClose }: AiChatViewProps) {
           )}
         </AnimatePresence>
 
-        {/* ─── 4. SUGGESTIONS DOCK & SHORTCUTS (Floating above input) ─── */}
+        {/* ─── 4. SUGGESTIONS DOCK & SHORTCUTS ─── */}
         <div className="px-5 pb-3 flex flex-col gap-2 shrink-0 select-none">
           {activeSuggestions.length > 0 && (
             <div className="rounded-2xl bg-[#1d1d22]/95 border border-white/[0.08] p-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-xl space-y-2">
-              {/* Header de Atajos de Teclado */}
               <div className="flex items-center justify-between text-[11px] text-zinc-400 font-medium px-1">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1">
@@ -379,7 +296,6 @@ export function AiChatView({ onClose }: AiChatViewProps) {
                 </span>
               </div>
 
-              {/* Lista de Sugerencias Interactivas */}
               <div className="space-y-1">
                 {activeSuggestions.map((suggestion, index) => {
                   const isSelected = index === selectedSuggestionIndex;
@@ -406,7 +322,6 @@ export function AiChatView({ onClose }: AiChatViewProps) {
 
           {/* ─── 5. INPUT BAR & CONTROLS DOCK ─── */}
           <div className="rounded-2xl bg-[#1a1a1e] border border-white/[0.1] focus-within:border-blue-500/50 p-2.5 shadow-xl flex flex-col gap-2 transition-colors">
-            {/* Context Quoted Chip */}
             <AnimatePresence>
               {quotedText && (
                 <motion.div
@@ -430,7 +345,6 @@ export function AiChatView({ onClose }: AiChatViewProps) {
               )}
             </AnimatePresence>
 
-            {/* Input Textarea */}
             <textarea
               ref={textareaRef}
               rows={1}
@@ -448,9 +362,7 @@ export function AiChatView({ onClose }: AiChatViewProps) {
               className="w-full bg-transparent border-0 px-2 py-1 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-0 resize-none overflow-y-auto"
             />
 
-            {/* Bottom Toolbar Controls */}
             <div className="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-              {/* Lado izquierdo: Paperclip, Modelo Gemini 3 Pro, Globo, Dots */}
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
@@ -460,7 +372,6 @@ export function AiChatView({ onClose }: AiChatViewProps) {
                   <Paperclip className="h-4 w-4" />
                 </button>
 
-                {/* Model Selector Badge */}
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] text-xs font-medium text-zinc-200 cursor-pointer transition-colors">
                   <Sparkles className="h-3.5 w-3.5 text-amber-400" />
                   <span>Gemini 3 Pro</span>
@@ -483,7 +394,6 @@ export function AiChatView({ onClose }: AiChatViewProps) {
                 </button>
               </div>
 
-              {/* Lado derecho: Waveform de voz + Botón Send circular */}
               <div className="flex items-center gap-2">
                 <button
                   type="button"

@@ -13,7 +13,6 @@ export function AiChatModal({ isOpen, onClose }: AiChatModalProps) {
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-          {/* Overlay clickeable para cerrar */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -22,7 +21,6 @@ export function AiChatModal({ isOpen, onClose }: AiChatModalProps) {
             className="absolute inset-0"
           />
 
-          {/* Contenedor del Modal con animación zoom spring */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

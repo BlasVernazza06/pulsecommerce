@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Video, FileText, Sparkles, ArrowUpRight } from "lucide-react";
-import { type ChatSourceCard } from "./ai-chat-types";
+import { Video, FileText, ArrowUpRight } from "lucide-react";
+import { type ChatSourceCard } from "../ai-types";
 
 export interface AiChatSourceCardsProps {
   sources?: ChatSourceCard[];
