@@ -120,7 +120,6 @@ export function AiFileIcon({ file, className = "h-3.5 w-3.5" }: AiFileIconProps)
     case "pdf":
       return (
         <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
-          {/* Badge SVG estilizado para PDF */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -158,7 +157,6 @@ export function AiFileIcon({ file, className = "h-3.5 w-3.5" }: AiFileIconProps)
     case "docx":
       return (
         <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
-          {/* Badge SVG estilizado para DOCX / Word */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -196,7 +194,6 @@ export function AiFileIcon({ file, className = "h-3.5 w-3.5" }: AiFileIconProps)
     case "odt":
       return (
         <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
-          {/* Badge SVG estilizado para ODT / LibreOffice */}
           <svg
             viewBox="0 0 24 24"
             fill="none"
