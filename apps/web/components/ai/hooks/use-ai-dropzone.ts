@@ -61,27 +61,51 @@ export function useAiDropzone(): UseAiDropzoneReturn {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isDraggingOverRef = useRef(false);
 
-  const isFileAllowed = (file: File) => {
-    const name = file.name.toLowerCase();
-    const hasValidExt = ACCEPTED_EXTENSIONS.some((ext) => name.endsWith(ext));
-    const hasValidMime = ACCEPTED_MIME_TYPES.includes(file.type) || file.type.startsWith("image/");
-    return hasValidExt || hasValidMime;
+  // Mantenemos sincronizado el ref para callbacks y listeners asíncronos
+  useEffect(() => {
+    isDraggingOverRef.current = isDraggingOver;
+  }, [isDraggingOver]);
+
+  // Listener de rescate global para mouseup y blur de ventana
+  useEffect(() => {
+    const handleGlobalDragEnd = () => {
+      if (isDraggingOverRef.current) {
+        setIsDraggingOver(false);
+      }
+    };
+
+    window.addEventListener("mouseup", handleGlobalDragEnd);
+    window.addEventListener("blur", handleGlobalDragEnd);
+    window.addEventListener("dragleave", (e) => {
+      // Si sale completamente de la ventana del navegador
+      if (!e.relatedTarget || (e.clientX <= 0 && e.clientY <= 0)) {
+        setIsDraggingOver(false);
+      }
+    });
+
+    return () => {
+      window.removeEventListener("mouseup", handleGlobalDragEnd);
+      window.removeEventListener("blur", handleGlobalDragEnd);
+    };
+  }, []);
+
+  const openFileDialog = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
   };
 
-  const handleFilesProcess = (newFiles: FileList | File[]) => {
-    const validFiles: File[] = [];
-
-    Array.from(newFiles).forEach((file) => {
-      if (!isFileAllowed(file)) {
-        console.warn(`Formato no soportado para: ${file.name}`);
-        return;
-      }
+  const addFiles = (filesToAdd: File[]) => {
+    const validFiles = filesToAdd.filter((file) => {
+      // Validamos tamaño máximo
       if (file.size > MAX_FILE_SIZE_BYTES) {
-        console.warn(`El archivo ${file.name} supera el límite de 25MB.`);
-        return;
+        console.warn(`El archivo "${file.name}" supera el límite de 25MB.`);
+        return false;
       }
-      validFiles.push(file);
+      return true;
     });
 
     if (validFiles.length > 0) {
@@ -89,12 +113,25 @@ export function useAiDropzone(): UseAiDropzoneReturn {
     }
   };
 
-  // ─── MANEJADORES LOCALES DE ARRASTRE RESILIENTES ───
+  const removeFile = (indexToRemove: number) => {
+    setAttachedFiles((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const clearFiles = () => {
+    setAttachedFiles([]);
+  };
+
+  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selected = Array.from(e.target.files);
+      addFiles(selected);
+    }
+  };
+
   const onDragEnter = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+    if (e.dataTransfer?.types && e.dataTransfer.types.includes("Files")) {
       setIsDraggingOver(true);
     }
   };
@@ -102,7 +139,9 @@ export function useAiDropzone(): UseAiDropzoneReturn {
   const onDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    e.dataTransfer.dropEffect = "copy";
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = "copy";
+    }
     if (!isDraggingOver) {
       setIsDraggingOver(true);
     }
@@ -111,12 +150,10 @@ export function useAiDropzone(): UseAiDropzoneReturn {
   const onDragLeave = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    // Verificamos si el cursor se movió hacia un elemento fuera de los límites del contenedor
+    // Solo apagamos el estado si el puntero abandonó el elemento contenedor (no sus hijos)
     const currentTarget = e.currentTarget;
     const relatedTarget = e.relatedTarget as Node | null;
-
-    if (!relatedTarget || !currentTarget.contains(relatedTarget)) {
+    if (!currentTarget.contains(relatedTarget)) {
       setIsDraggingOver(false);
     }
   };
@@ -126,57 +163,10 @@ export function useAiDropzone(): UseAiDropzoneReturn {
     e.stopPropagation();
     setIsDraggingOver(false);
 
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleFilesProcess(files);
+    if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+      const droppedFiles = Array.from(e.dataTransfer.files);
+      addFiles(droppedFiles);
     }
-  };
-
-  // ─── LISTENERS GLOBALES DE SEGURIDAD (ANTI-BLOQUEO) ───
-  useEffect(() => {
-    const handleGlobalCancel = () => {
-      setIsDraggingOver(false);
-    };
-
-    // Reseteo si el puntero abandona por completo la ventana del navegador
-    const handleWindowDragLeave = (e: globalThis.DragEvent) => {
-      if (
-        !e.relatedTarget &&
-        (e.clientY <= 0 || e.clientX <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight)
-      ) {
-        setIsDraggingOver(false);
-      }
-    };
-
-    window.addEventListener("dragend", handleGlobalCancel);
-    window.addEventListener("drop", handleGlobalCancel);
-    window.addEventListener("dragleave", handleWindowDragLeave);
-
-    return () => {
-      window.removeEventListener("dragend", handleGlobalCancel);
-      window.removeEventListener("drop", handleGlobalCancel);
-      window.removeEventListener("dragleave", handleWindowDragLeave);
-    };
-  }, []);
-
-  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFilesProcess(files);
-    }
-    e.target.value = "";
-  };
-
-  const openFileDialog = () => {
-    fileInputRef.current?.click();
-  };
-
-  const removeFile = (index: number) => {
-    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const clearFiles = () => {
-    setAttachedFiles([]);
   };
 
   return {
@@ -195,4 +185,3 @@ export function useAiDropzone(): UseAiDropzoneReturn {
     },
   };
 }
-

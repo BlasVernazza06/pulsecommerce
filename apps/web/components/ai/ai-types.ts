@@ -13,6 +13,14 @@ export interface ChatSuggestion {
   description?: string;
 }
 
+export interface ChatAttachment {
+  id: string;
+  name: string;
+  size: string;
+  type: string;
+  url?: string;
+}
+
 export interface ChatMessage {
   id: string;
   sender: "user" | "assistant";
@@ -29,4 +37,5 @@ export interface ChatMessage {
   sources?: ChatSourceCard[];
   suggestions?: ChatSuggestion[];
   quotedText?: string;
+  attachments?: ChatAttachment[];
 }
