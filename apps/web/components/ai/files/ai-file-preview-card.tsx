@@ -1,17 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, FileText, Sparkles } from "lucide-react";
 import { AiFileIcon } from "./ai-file-icon";
+import {
+  renderPdfFirstPageToDataUrl,
+  pdfThumbnailCache,
+  formatBytes,
+} from "../utils/ai-pdf-thumbnail-loader";
 
 export interface AiFilePreviewCardProps {
   /** Archivo binario a inspeccionar */
   file: File;
 }
-
-// Caché en memoria para no re-renderizar la misma primera página dos veces
-const pdfThumbnailCache = new Map<string, string>();
 
 /**
  * `<AiFilePreviewCard />`
@@ -65,11 +67,9 @@ function ImagePreviewThumbnail({ file }: { file: File }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    // Creamos la URL apuntando al bloque de memoria en el navegador
     const objectUrl = URL.createObjectURL(file);
     setImageUrl(objectUrl);
 
-    // Limpieza obligatoria para evitar fugas de memoria (Memory Leaks)
     return () => {
       URL.revokeObjectURL(objectUrl);
     };
@@ -91,61 +91,6 @@ function ImagePreviewThumbnail({ file }: { file: File }) {
   );
 }
 
-// ─── CARGADOR RESILIENTE DE PDF.JS (ESM + SCRIPT TAG FALLBACK) ───
-let pdfJsLoadingPromise: Promise<any> | null = null;
-
-async function getPdfJsLib(): Promise<any> {
-  if (typeof window === "undefined") return null;
-  if ((window as any).pdfjsLib) return (window as any).pdfjsLib;
-
-  if (pdfJsLoadingPromise) return pdfJsLoadingPromise;
-
-  pdfJsLoadingPromise = (async () => {
-    // 1. Intentamos ESM dinámico por CDN
-    try {
-      const cdnUrl = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs";
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      const dynamicImport = new Function("url", "return import(url)");
-      const pdfjs = await dynamicImport(cdnUrl);
-      if (pdfjs && (pdfjs.getDocument || pdfjs.default?.getDocument)) {
-        const lib = pdfjs.getDocument ? pdfjs : pdfjs.default;
-        lib.GlobalWorkerOptions.workerSrc =
-          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.mjs";
-        (window as any).pdfjsLib = lib;
-        return lib;
-      }
-    } catch (esmErr) {
-      console.warn("Fallo ESM import, activando fallback por script tag...", esmErr);
-    }
-
-    // 2. Fallback por inyección de script tag clásico (Versión compatible universal)
-    return new Promise((resolve, reject) => {
-      const existingScript = document.querySelector('script[src*="pdf.min.js"]');
-      if (existingScript && (window as any).pdfjsLib) {
-        return resolve((window as any).pdfjsLib);
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
-      script.async = true;
-      script.onload = () => {
-        const lib = (window as any).pdfjsLib;
-        if (lib) {
-          lib.GlobalWorkerOptions.workerSrc =
-            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-          resolve(lib);
-        } else {
-          reject(new Error("pdfjsLib no se inicializó correctamente"));
-        }
-      };
-      script.onerror = (e) => reject(new Error("Error al descargar PDF.js desde CDN"));
-      document.head.appendChild(script);
-    });
-  })();
-
-  return pdfJsLoadingPromise;
-}
-
 // ─── SUBCOMPONENTE: SCREENSHOT DE PÁGINA 1 DE PDF ───
 function PdfFirstPageThumbnail({ file }: { file: File }) {
   const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
@@ -156,7 +101,6 @@ function PdfFirstPageThumbnail({ file }: { file: File }) {
     let isMounted = true;
     const cacheKey = `${file.name}-${file.size}-${file.lastModified}`;
 
-    // Verificamos si ya existe en la caché en memoria
     if (pdfThumbnailCache.has(cacheKey)) {
       setThumbnailSrc(pdfThumbnailCache.get(cacheKey)!);
       setLoading(false);
@@ -166,45 +110,20 @@ function PdfFirstPageThumbnail({ file }: { file: File }) {
     setLoading(true);
     setHasError(false);
 
-    // Pipeline dinámico de renderizado a canvas
-    const renderPdfFirstPage = async () => {
-      try {
-        const pdfjsLib = await getPdfJsLib();
-        if (!pdfjsLib) throw new Error("PDF.js no disponible");
-
-        const arrayBuffer = await file.arrayBuffer();
-        const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        const page = await pdfDoc.getPage(1);
-
-        // Escala reducida para render ultrarrápido y ligero (~200px)
-        const viewport = page.getViewport({ scale: 0.35 });
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        if (!ctx) throw new Error("No 2D Context");
-
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        await page.render({ canvasContext: ctx, viewport }).promise;
-
-        const dataUrl = canvas.toDataURL("image/webp", 0.85);
-        pdfThumbnailCache.set(cacheKey, dataUrl);
-
+    renderPdfFirstPageToDataUrl(file)
+      .then((dataUrl) => {
         if (isMounted) {
           setThumbnailSrc(dataUrl);
           setLoading(false);
         }
-      } catch (err) {
+      })
+      .catch((err) => {
         console.warn("No se pudo renderizar la primera página del PDF:", err);
         if (isMounted) {
           setHasError(true);
           setLoading(false);
         }
-      }
-    };
-
-    renderPdfFirstPage();
+      });
 
     return () => {
       isMounted = false;
@@ -268,14 +187,4 @@ function OfficeDocInspectionSection({ file }: { file: File }) {
       </p>
     </div>
   );
-}
-
-// ─── UTILIDAD: FORMATEO DE BYTES ───
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  if (bytes < k * k) {
-    return `${Math.round(bytes / k)} KB`;
-  }
-  return `${(bytes / (k * k)).toFixed(2)} MB`;
 }
