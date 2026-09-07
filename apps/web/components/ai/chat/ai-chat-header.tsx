@@ -74,7 +74,7 @@ export function AiChatHeader({
 
   return (
     <header
-      className={`flex items-center justify-between px-4 py-3 bg-[#131317] z-20 shrink-0 select-none relative ${className}`}
+      className={`flex items-center justify-between px-4 py-3 bg-[#121216] border-b border-white/[0.06] z-20 shrink-0 select-none relative ${className}`}
     >
       {/* Lado Izquierdo: Botón de Acciones con Menú Desplegable Minimalista */}
       <div ref={actionsMenuRef} className="relative flex items-center">

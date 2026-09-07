@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`dark ${dmSans.variable}`}>
-      <body className="antialiased min-h-screen bg-background text-foreground selection:bg-white/20 selection:text-white font-sans">
+      <body className="antialiased min-h-screen bg-[#09090b] text-foreground selection:bg-white/20 selection:text-white font-sans">
         {children}
       </body>
     </html>

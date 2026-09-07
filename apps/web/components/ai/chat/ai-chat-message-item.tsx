@@ -41,7 +41,7 @@ export function AiChatMessageItem({
 
         {/* Mensaje de texto */}
         {message.content ? (
-          <div className="px-4 py-2.5 rounded-2xl bg-blue-600 text-white text-sm max-w-lg shadow-md font-medium">
+          <div className="px-4 py-2.5 rounded-2xl bg-blue-600/95 border border-blue-400/30 text-white text-[13.5px] max-w-lg shadow-md font-medium leading-snug">
             {message.content}
           </div>
         ) : null}
