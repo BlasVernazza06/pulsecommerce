@@ -76,8 +76,8 @@ export function AiCommandInputDock({
     : input.placeholder || "Preguntale al Asistente IA sobre el POS, stock, ventas...";
 
   const containerClasses = isExpanded
-    ? "w-full rounded-[26px] bg-[#1c1c22] border border-white/[0.08] hover:border-white/[0.14] focus-within:border-white/[0.22] p-3 shadow-md flex flex-col gap-1.5 transition-colors"
-    : "w-full max-w-2xl rounded-[28px] px-4 pt-3.5 pb-3 bg-[#101014] border border-white/[0.09] focus-within:border-white/[0.18] shadow-[0_25px_80px_rgba(0,0,0,0.95)] flex flex-col gap-1.5";
+    ? "w-full rounded-[24px] bg-[#18181e]/95 border border-white/[0.1] hover:border-white/[0.16] focus-within:border-white/[0.22] p-3 shadow-md flex flex-col gap-1.5 transition-colors backdrop-blur-2xl"
+    : "w-full max-w-2xl rounded-[28px] px-4 pt-3.5 pb-3 bg-[#121216]/95 border border-white/[0.12] ring-1 ring-white/5 focus-within:border-white/[0.25] shadow-[0_25px_80px_rgba(0,0,0,0.95)] backdrop-blur-2xl flex flex-col gap-1.5";
 
   return (
     <div {...dragProps} className={`${containerClasses} ${className}`}>

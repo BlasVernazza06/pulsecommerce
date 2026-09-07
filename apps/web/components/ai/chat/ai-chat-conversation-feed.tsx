@@ -75,11 +75,11 @@ export function AiChatConversationFeed({
       />
 
       {/* ─── 2. FEED SCROLLEABLE DE MENSAJES & ADJUNTOS ─── */}
-      <div className="relative flex-1 min-h-0 overflow-hidden flex flex-col bg-[#131317]">
+      <div className="relative flex-1 min-h-0 overflow-hidden flex flex-col bg-[#121216]">
         <div
           ref={chatScrollRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-5 pt-4 pb-8 space-y-4 bg-[#131317] [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.1)_transparent]"
+          className="flex-1 overflow-y-auto px-5 pt-4 pb-8 space-y-4 bg-[#121216] [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.1)_transparent]"
         >
           {/* Tarjetas de fuentes apiladas */}
           {latestAssistantMessage?.sources && latestAssistantMessage.sources.length > 0 && (

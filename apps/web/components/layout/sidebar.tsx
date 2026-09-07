@@ -39,14 +39,14 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
           <button
             type="button"
             onClick={() => setShowRoleMenu((prev) => !prev)}
-            className="w-full flex items-center justify-between p-2 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] cursor-pointer transition-colors text-left"
+            className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-white/[0.05] cursor-pointer transition-colors text-left"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-900 border border-white/[0.1] text-white font-bold text-sm">
                 #
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-semibold text-white tracking-tight flex items-center gap-1.5 truncate">
+                <span className="text-md font-semibold text-white tracking-tight flex items-center gap-1.5 truncate">
                   PulseCommerce
                   <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
                 </span>

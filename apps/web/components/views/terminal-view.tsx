@@ -21,7 +21,7 @@ export function TerminalView() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       {/* Top Header dentro de la Isla */}
-      <header className="h-16 border-b border-white/[0.06] px-6 flex items-center justify-between bg-card/40 backdrop-blur-xl shrink-0">
+      <header className="h-16 border-b border-white/[0.06] px-6 flex items-center justify-between bg-black/60 backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-2.5">
           <h2 className="text-sm font-semibold text-white tracking-tight flex items-center gap-1.5">
             Terminal Operativo & Ventas
