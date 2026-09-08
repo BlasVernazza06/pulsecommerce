@@ -148,7 +148,7 @@ export function InventoryView() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-black text-white">
       {/* Header Superior del Módulo con bg-[#09090b]/80 backdrop-blur-xl */}
-      <header className="h-16 border-b border-white/[0.08] px-6 flex items-center justify-between bg-[#09090b]/80 backdrop-blur-xl shrink-0">
+      <header className="h-16 border-b border-white/[0.08] px-6 flex items-center justify-between bg-black backdrop-blur-xl shrink-0">
         <div className="flex items-center gap-2.5">
           <h2 className="text-sm font-semibold text-white tracking-tight flex items-center gap-1.5">
             Inventario & Stock Multidepósito

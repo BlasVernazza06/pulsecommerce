@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { AuthProvider } from "@/context/auth-context";
 import { Sidebar, type NavTabId } from "@/components/layout/sidebar";
 import { MainContent } from "@/components/layout/main-content";
+import { SettingsModal, type SettingsTabId } from "@/components/settings";
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<NavTabId>("home");
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<SettingsTabId>("general");
 
   // apps/web/app/page.tsx
   useEffect(() => {
@@ -23,15 +26,32 @@ export default function DashboardPage() {
     window.addEventListener("keydown", handleGlobalShortcuts);
     return () => window.removeEventListener("keydown", handleGlobalShortcuts);
   }, []);
+
+  const handleOpenSettings = (tab: SettingsTabId = "general") => {
+    setSettingsTab(tab);
+    setIsSettingsOpen(true);
+  };
+
   return (
     <AuthProvider>
       {/* ─── MARCO EXTERIOR (Grisáceo Outer Frame #09090b con padding uniforme) ─── */}
       <div className="flex h-screen w-screen bg-[#09090b] p-3 gap-3 overflow-hidden select-none font-sans">
         {/* ─── SIDEBAR DESACOPLADO ─── */}
-        <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} />
+        <Sidebar
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          onOpenSettings={handleOpenSettings}
+        />
 
         {/* ─── CONTENIDO PRINCIPAL DINÁMICO ─── */}
         <MainContent activeTab={activeTab} onNavigate={setActiveTab} />
+
+        {/* ─── MODAL DE AJUSTES DEL SISTEMA (MASTER-DETAIL) ─── */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          defaultTab={settingsTab}
+        />
       </div>
     </AuthProvider>
   );
