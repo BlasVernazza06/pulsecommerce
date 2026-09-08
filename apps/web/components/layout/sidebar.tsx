@@ -25,9 +25,10 @@ export type NavTabId = "home" | "analytics" | "customers" | "stock" | "payouts" 
 export interface SidebarProps {
   activeTab: NavTabId;
   onSelectTab: (tab: NavTabId) => void;
+  onOpenSettings?: (tab?: "general" | "hardware" | "pricing" | "ai" | "security" | "sync") => void;
 }
 
-export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
+export function Sidebar({ activeTab, onSelectTab, onOpenSettings }: SidebarProps) {
   const { currentEmployee, setRole, availableRoles } = useAuth();
   const [showRoleMenu, setShowRoleMenu] = React.useState(false);
 
@@ -102,7 +103,7 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
           <Can roles={["OWNER", "MANAGER", "CASHIER", "STOCK_CLERK"]}>
             <NavLink
               id="home"
-              label="Terminal & Home"
+              label="Home"
               icon={Home}
               isActive={activeTab === "home"}
               onClick={() => onSelectTab("home")}
@@ -182,7 +183,8 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
           <Button
             variant="outline"
             size="sm"
-            className="w-full text-xs h-7 gap-1.5 mt-1 border-white/[0.1] bg-white/[0.04]"
+            onClick={() => (onOpenSettings ? onOpenSettings("ai") : onSelectTab("settings"))}
+            className="w-full text-xs h-7 gap-1.5 mt-1 border-white/[0.1] bg-white/[0.04] cursor-pointer"
           >
             <span>Configurar</span>
             <ArrowUpRight className="h-3 w-3" />
@@ -197,7 +199,13 @@ export function Sidebar({ activeTab, onSelectTab }: SidebarProps) {
               label="Ajustes del Sistema"
               icon={Settings}
               isActive={activeTab === "settings"}
-              onClick={() => onSelectTab("settings")}
+              onClick={() => {
+                if (onOpenSettings) {
+                  onOpenSettings("general");
+                } else {
+                  onSelectTab("settings");
+                }
+              }}
             />
           </Can>
 
